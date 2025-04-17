@@ -7,6 +7,7 @@ from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
     par_1_dir = get_package_share_directory('par_1')
+    aiil_rosbot_demo_dir = get_package_share_directory('aiil_rosbot_demo')
 
     return LaunchDescription([
         # Launch SLAM from par_1
@@ -23,10 +24,10 @@ def generate_launch_description():
             )
         ),
 
-        # Launch Find Object 2D for hazard detection
+        # Launch Find Object 2D from aiil_rosbot_demo
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
-                os.path.join(par_1_dir, 'launch', 'find_object_2d_robot.launch.py')
+                os.path.join(aiil_rosbot_demo_dir, 'launch', 'find_object_2d_robot.launch.py')
             ),
             launch_arguments={'gui': 'false'}.items()
         ),
