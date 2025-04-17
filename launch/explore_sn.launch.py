@@ -44,7 +44,7 @@ def generate_launch_description():
         # Hazard detection node
         Node(
             package='par_1',
-            executable='hazard_detector',
+            executable='hazard_detection_node',
             name='hazard_detector',
             output='screen'
         ),
