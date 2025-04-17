@@ -32,6 +32,9 @@ setup(
         'console_scripts': [
             'occupancy_nav = par_1.occupancy_nav:main',
             'hazard_detection_node = par_1.hazard_detection_node:main',
+            'path_rec = go.path_rec:main',
+            'rev_waypoint = go.rev_waypoint:main',
+
         ],
     },
 )
