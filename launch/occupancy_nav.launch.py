@@ -4,7 +4,7 @@ from launch_ros.actions import Node
 def generate_launch_description():
     return LaunchDescription([
         Node(
-            package='aiil_rosbot_demo',
+            package='par_1,
             executable='occupancy_nav',
             name='occupancy_nav',
             output='screen',
