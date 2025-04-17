@@ -1,48 +1,45 @@
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
+from launch.actions import IncludeLaunchDescription, ExecuteProcess
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import PathJoinSubstitution
 from launch_ros.actions import Node
-from launch_ros.substitutions import FindPackageShare
+from launch.substitutions import ThisLaunchFileDir
+import os
+
+from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
-    slam_params = PathJoinSubstitution([FindPackageShare("par_1"), "config", "slam.yaml"])
-    nav2_params = PathJoinSubstitution([FindPackageShare("par_1"), "config", "navigation_pro3.yaml"])
-
+    # Get package directories
+    aiil_gazebo_dir = get_package_share_directory('aiil_gazebo')
+    aiil_rosbot_demo_dir = get_package_share_directory('aiil_rosbot_demo')
+    
     return LaunchDescription([
-        # SLAM Toolbox (async)
+        # Launch SLAM
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
-                PathJoinSubstitution([FindPackageShare("slam_toolbox"), "launch", "online_async_launch.py"])
-            ),
-            launch_arguments={
-                "slam_params_file": slam_params,
-                "use_sim_time": "false"
-            }.items(),
+                os.path.join(aiil_gazebo_dir, 'launch', 'slam.launch.py')
+            )
         ),
 
-        # Nav2 Navigation stack
+        # Launch Navigation
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
-                PathJoinSubstitution([FindPackageShare("nav2_bringup"), "launch", "navigation_launch.py"])
-            ),
-            launch_arguments={
-                "params_file": nav2_params,
-                "use_sim_time": "false",
-                "autostart": "true",
-                "map_subscribe_transient_local": "true"
-            }.items(),
+                os.path.join(aiil_gazebo_dir, 'launch', 'nav.launch.py')
+            )
         ),
 
-        # Custom OccupancyNav node
+        # Launch Find Object 2D (with gui:=false)
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                os.path.join(aiil_rosbot_demo_dir, 'launch', 'find_object_2d_robot.launch.py')
+            ),
+            launch_arguments={'gui': 'false'}.items()
+        ),
+
+        # Run hazard_detector node
         Node(
-            package="par_1",
-            executable="occupancy_nav",
-            name="occupancy_nav",
-            output="screen",
-            parameters=[
-                {"use_sim_time": False},
-                {"robot_frame": "base_link"}
-            ]
+            package='my_robot_challenge_pkg',
+            executable='hazard_detector',
+            name='hazard_detector',
+            output='screen'
         )
     ])
