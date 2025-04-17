@@ -1,45 +1,50 @@
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, ExecuteProcess
+from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
-from launch.substitutions import ThisLaunchFileDir
 import os
-
 from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
-    # Get package directories
-    aiil_gazebo_dir = get_package_share_directory('aiil_gazebo')
-    aiil_rosbot_demo_dir = get_package_share_directory('aiil_rosbot_demo')
-    
+    par_1_dir = get_package_share_directory('par_1')
+
     return LaunchDescription([
-        # Launch SLAM
+        # Launch SLAM from par_1
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
-                os.path.join(aiil_gazebo_dir, 'launch', 'slam.launch.py')
+                os.path.join(par_1_dir, 'launch', 'slam.launch.py')
             )
         ),
 
-        # Launch Navigation
+        # Launch Nav2 stack from par_1
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
-                os.path.join(aiil_gazebo_dir, 'launch', 'nav.launch.py')
+                os.path.join(par_1_dir, 'launch', 'nav.launch.py')
             )
         ),
 
-        # Launch Find Object 2D (with gui:=false)
+        # Launch Find Object 2D for hazard detection
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
-                os.path.join(aiil_rosbot_demo_dir, 'launch', 'find_object_2d_robot.launch.py')
+                os.path.join(par_1_dir, 'launch', 'find_object_2d_robot.launch.py')
             ),
             launch_arguments={'gui': 'false'}.items()
         ),
 
-        # Run hazard_detector node
+        # Occupancy-based autonomous exploration
         Node(
-            package='my_robot_challenge_pkg',
+            package='par_1',
+            executable='occupancy_nav',
+            name='occupancy_nav',
+            output='screen',
+            parameters=[{'use_sim_time': False}]
+        ),
+
+        # Hazard detection node
+        Node(
+            package='par_1',
             executable='hazard_detector',
             name='hazard_detector',
             output='screen'
-        )
+        ),
     ])
