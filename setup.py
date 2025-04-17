@@ -25,6 +25,7 @@ setup(
     entry_points={
         'console_scripts': [
             'occupancy_nav = par_1.occupancy_nav:main',
+            'hazard_detection_node = par_1.hazard_detection_node:main',
         ],
     },
 )
