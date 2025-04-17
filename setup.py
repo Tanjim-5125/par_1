@@ -2,7 +2,7 @@ from setuptools import setup
 import os
 from glob import glob
 
-package_name = 'my_robot_challenge_pkg'
+package_name = 'par_1'
 
 setup(
     name=package_name,
@@ -24,7 +24,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'occupancy_nav = my_robot_challenge_pkg.occupancy_nav:main',
+            'occupancy_nav = par_1.occupancy_nav:main',
         ],
     },
 )
